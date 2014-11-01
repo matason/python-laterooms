@@ -14,4 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .api import API
+class Hotel:
+    _base_path = "hotel"
+    _url = None
+
+    def __init__(self, base_url):
+        url = [base_url]
+        url.append(self._base_path)
+        self._url = str.join("/", url)
+
+    def HandleRequest(self):
+        pass

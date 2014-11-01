@@ -14,7 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class Search:
+class SearchFactory:
+    def create(type, base_url=None):
+        handler = {
+            'text': SearchText(base_url),
+            'keyword': SearchKeyword(base_url),
+            'area': SearchArea(base_url),
+            'location': SearchLocation(base_url),
+            'map': SearchMap(base_url),
+            'polygon': SearchPolygon(base_url)
+            }.get(type, None)
+
+        if None == handler:
+            raise ValueError('Unsupported search type requested.')
+
+        return handler
+
+class SearchBase:
     _base_path = "search"
     _url = None
 
@@ -22,3 +38,30 @@ class Search:
         url = [base_url]
         url.append(self._base_path)
         self._url = str.join("/", url)
+
+    def HandleRequest(self):
+        pass
+
+class SearchText(SearchBase):
+    def __init__(self, base_url):
+        super().__init__(base_url)
+
+class SearchKeyword(SearchBase):
+    def __init__(self, base_url):
+        super().__init__(base_url)
+
+class SearchArea(SearchBase):
+    def __init__(self, base_url):
+        super().__init__(base_url)
+
+class SearchLocation(SearchBase):
+    def __init__(self, base_url):
+        super().__init__(base_url)
+
+class SearchMap(SearchBase):
+    def __init__(self, base_url):
+        super().__init__(base_url)
+
+class SearchPolygon(SearchBase):
+    def __init__(self, base_url):
+        super().__init__(base_url)

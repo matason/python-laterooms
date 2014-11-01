@@ -14,12 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# import requests
+import requests
 from laterooms import search
+from laterooms import hotel
 
 class API:
     _base_url = None
-    _search = None
+    _search = {}
+    _hotel = None
 
     def __init__(self, base_url=None):
         if base_url is None:
@@ -27,6 +29,14 @@ class API:
         else:
             self._base_url = base_url
 
-    def Search(self):
-        if None == self._search:
-            self._search = search.Search(self._base_url)
+    def Search(self, type):
+        if type not in self._search:
+            self._search[type] = search.SearchFactory.create(type, self._base_url)
+
+        self._search[type].HandleRequest()
+
+    def Hotel(self):
+        if None == self._hotel:
+            self._hotel = hotel.Hotel(self._base_url)
+
+        self._hotel.HandleRequest()
