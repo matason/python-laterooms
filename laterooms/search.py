@@ -34,9 +34,10 @@ class SearchBase:
     _base_path = "search"
     _url = None
 
-    def __init__(self, base_url):
+    def __init__(self, base_url, path):
         url = [base_url]
         url.append(self._base_path)
+        url.append(path)
         self._url = str.join("/", url)
 
     def HandleRequest(self):
@@ -44,24 +45,24 @@ class SearchBase:
 
 class SearchText(SearchBase):
     def __init__(self, base_url):
-        super().__init__(base_url)
+        super().__init__(base_url, "")
 
 class SearchKeyword(SearchBase):
     def __init__(self, base_url):
-        super().__init__(base_url)
+        super().__init__(base_url, "")
 
 class SearchArea(SearchBase):
     def __init__(self, base_url):
-        super().__init__(base_url)
+        super().__init__(base_url, "")
 
 class SearchLocation(SearchBase):
     def __init__(self, base_url):
-        super().__init__(base_url)
+        super().__init__(base_url, "location")
 
 class SearchMap(SearchBase):
     def __init__(self, base_url):
-        super().__init__(base_url)
+        super().__init__(base_url, "")
 
 class SearchPolygon(SearchBase):
     def __init__(self, base_url):
-        super().__init__(base_url)
+        super().__init__(base_url, "")

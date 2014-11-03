@@ -33,10 +33,10 @@ class API:
         if type not in self._search:
             self._search[type] = search.SearchFactory.create(type, self._base_url)
 
-        self._search[type].HandleRequest()
+        return self._search[type]
 
     def Hotel(self):
         if None == self._hotel:
             self._hotel = hotel.Hotel(self._base_url)
 
-        self._hotel.HandleRequest()
+        return self._hotel
