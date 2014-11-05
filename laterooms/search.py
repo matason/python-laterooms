@@ -14,55 +14,85 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+import requests
+
 class SearchFactory:
-    def create(type, base_url=None):
+    def create(type, api_key, base_url):
         handler = {
-            'text': SearchText(base_url),
-            'keyword': SearchKeyword(base_url),
-            'area': SearchArea(base_url),
-            'location': SearchLocation(base_url),
-            'map': SearchMap(base_url),
-            'polygon': SearchPolygon(base_url)
+            "text": "SearchText",
+            "keyword": "SearchKeyword",
+            "area": "SearchArea",
+            "location": "SearchLocation",
+            "map": "SearchMap",
+            "polygon": "SearchPolygon",
             }.get(type, None)
 
         if None == handler:
             raise ValueError('Unsupported search type requested.')
 
-        return handler
+        class_name = getattr(sys.modules[__name__], handler)
+        return class_name(api_key, base_url)
 
 class SearchBase:
+    _api_key = ""
     _base_path = "search"
     _url = None
 
-    def __init__(self, base_url, path):
+    def __init__(self, api_key, base_url, path):
+        self._api_key = api_key
         url = [base_url]
         url.append(self._base_path)
         url.append(path)
         self._url = str.join("/", url)
 
-    def HandleRequest(self):
-        pass
+    def Execute(self):
+        try:
+            headers = {"API-Key": self._api_key}
+            response = requests.get(self._url, headers=headers)
+        except requests.RequestException as e:
+            raise Exception(str(e))
+
+        return response
 
 class SearchText(SearchBase):
-    def __init__(self, base_url):
-        super().__init__(base_url, "")
+    def __init__(self, api_key, base_url):
+        super().__init__(api_key, base_url, "")
 
 class SearchKeyword(SearchBase):
-    def __init__(self, base_url):
-        super().__init__(base_url, "")
+    def __init__(self, api_key, base_url):
+        super().__init__(api_key, base_url, "")
 
 class SearchArea(SearchBase):
-    def __init__(self, base_url):
-        super().__init__(base_url, "")
+    def __init__(self, api_key, base_url):
+        super().__init__(api_key, base_url, "")
 
 class SearchLocation(SearchBase):
-    def __init__(self, base_url):
-        super().__init__(base_url, "location")
+    def __init__(self, api_key, base_url):
+        super().__init__(api_key, base_url, "location")
+
+    def SetParameters(self, parameters):
+        url_parts = []
+        mandatory_parts = []
+
+        # Process mandatory paramaters.
+        mandatory_parts.append(parameters["lat"])
+        mandatory_parts.append(parameters["long"])
+        url_parts.append(str.join(",", mandatory_parts))
+
+        # Process optional parameters.
+        if "radius" in parameters.keys():
+            url_parts.append(parameters["radius"])
+
+        self._url += "/" + str.join("/", url_parts)
+
+        # A trailing slash is required by the API.
+        self._url += "/"
 
 class SearchMap(SearchBase):
-    def __init__(self, base_url):
-        super().__init__(base_url, "")
+    def __init__(self, api_key, base_url):
+        super().__init__(api_key, base_url, "")
 
 class SearchPolygon(SearchBase):
-    def __init__(self, base_url):
-        super().__init__(base_url, "")
+    def __init__(self, api_key, base_url):
+        super().__init__(api_key, base_url, "")

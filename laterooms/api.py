@@ -20,23 +20,21 @@ from laterooms import hotel
 
 class API:
     _base_url = None
-    _search = {}
-    _hotel = None
+    _api_key = ""
 
-    def __init__(self, base_url=None):
+    def __init__(self, api_key, base_url=None):
+        self._api_key = api_key
+
         if base_url is None:
             self._base_url = 'https://sandbox.api.tlrg.io/v1/mobile'
         else:
             self._base_url = base_url
 
-    def Search(self, type):
-        if type not in self._search:
-            self._search[type] = search.SearchFactory.create(type, self._base_url)
-
-        return self._search[type]
+    def Search(self, type, parameters):
+        s = search.SearchFactory.create(type, self._api_key, self._base_url)
+        s.SetParameters(parameters)
+        return s
 
     def Hotel(self):
-        if None == self._hotel:
-            self._hotel = hotel.Hotel(self._base_url)
-
-        return self._hotel
+        h = hotel.Hotel(self._api_key, self._base_url)
+        return h

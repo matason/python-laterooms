@@ -19,12 +19,12 @@ import laterooms
 
 class LateRoomsAPITestCase(unittest.TestCase):
     def test_api_default_base_url(self):
-        api = laterooms.API()
+        api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn")
         self.assertEqual(api._base_url, "https://sandbox.api.tlrg.io/v1/mobile")
 
     def test_api_overridden_base_url(self):
         url = "http://example.com"
-        api = laterooms.API(url)
+        api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn", url)
         self.assertEqual(api._base_url, url)
 
 if __name__ == '__main__':

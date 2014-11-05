@@ -19,7 +19,7 @@ import laterooms
 
 class LateRoomsHotelTestCase(unittest.TestCase):
     def test_hotel_url(self):
-        api = laterooms.API()
+        api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn")
         hotel = api.Hotel()
         self.assertEqual(hotel._url, "https://sandbox.api.tlrg.io/v1/mobile/hotel")
 

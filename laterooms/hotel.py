@@ -15,13 +15,21 @@
 # limitations under the License.
 
 class Hotel:
+    _api_key = ""
     _base_path = "hotel"
     _url = None
 
-    def __init__(self, base_url):
+    def __init__(self, api_key, base_url):
+        self._api_key = api_key
         url = [base_url]
         url.append(self._base_path)
         self._url = str.join("/", url)
 
-    def HandleRequest(self):
-        pass
+    def Execute(self):
+        try:
+            headers = {"API-Key": self._api_key}
+            response = requests.get(self._url, headers=headers)
+        except requests.RequestException as e:
+            raise Exception(str(e))
+
+        return response

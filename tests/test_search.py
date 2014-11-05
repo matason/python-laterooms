@@ -18,10 +18,41 @@ import unittest
 import laterooms
 
 class LateRoomsSearchTestCase(unittest.TestCase):
-    def test_search_url(self):
-        api = laterooms.API()
-        search = api.Search("location")
-        self.assertEqual(search._url, "https://sandbox.api.tlrg.io/v1/mobile/search/location")
+    def test_search_unsupported_search_type(self):
+        api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn")
+        self.assertRaises(ValueError, api.Search, "unsupported", {})
+
+    def test_search_url_with_radius(self):
+        api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn")
+        parameters = {"lat": "28.053672", "long": "-82.404526", "radius": "10"}
+        search = api.Search("location", parameters)
+        self.assertEqual(search._url, "https://sandbox.api.tlrg.io/v1/mobile/search/location/28.053672,-82.404526/10/")
+
+    def test_search_url_without_radius(self):
+        api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn")
+        parameters = {"lat": "28.053672", "long": "-82.404526"}
+        search = api.Search("location", parameters)
+        self.assertEqual(search._url, "https://sandbox.api.tlrg.io/v1/mobile/search/location/28.053672,-82.404526/")
+
+    def test_search_url_missing_mandatory_parameter(self):
+        api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn")
+        parameters = {"lat": "28.053672"}
+        self.assertRaises(KeyError, api.Search, "location", parameters)
+
+    def test_search_response_status_code(self):
+        api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn")
+        parameters = {"lat": "28.053672", "long": "-82.404526"}
+        search = api.Search("location", parameters)
+        response = search.Execute()
+        self.assertEqual(200, response.status_code)
+
+    # Radius search currently broken at the API, returns a 404.
+    #def test_search_response_status_code_with_radius(self):
+        #api = laterooms.API("JufM0RVUtJT9ZU8HDAmOg4mGThA78qPn")
+        #parameters = {"lat": "28.053672", "long": "-82.404526", "radius": "10"}
+        #search = api.Search("location", parameters)
+        #response = search.Execute()
+        #self.assertEqual(200, response.status_code)
 
 if __name__ == '__main__':
     unittest.main()
